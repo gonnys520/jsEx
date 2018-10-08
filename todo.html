@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+
+<style>
+    *{
+        margin: 0px;
+        padding: 0px;
+    }
+    .container{
+        width: 100%;
+        height: 100vh;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+    .todoList{
+        min-width: 400px;
+        min-height: 550px;
+        background-color: antiquewhite;
+    }
+    .inputPart{
+        display: flex;
+        padding-top: 50px;
+        justify-content: center;
+        align-items: center;
+    }
+    .inputPart input {
+        width: 80%;
+        height: 5vh;
+        margin: 5px;
+        padding-left: 20px;
+        border-color: burlywood;
+        font-size: 2em;
+        text-align: left;
+        padding-right: 10px;
+    }
+
+    .listPart{
+        padding-top: 20px;
+        padding-left: 30px;
+        font-size: 2em;
+        /*justify-content: center;*/
+        /*align-items: center;*/
+        flex-direction: column;
+    }
+
+</style>
+
+
+<div class="container">
+
+    <div class="todoList">
+        <div class="inputPart" onkeyup="enterkey()">
+            <input type="text" id="inputTodoList" value="" >
+        </div>
+        <div class="listPart"></div>
+        <!--<ul class="row"><input type="checkbox"/>-->
+        <!--test1-->
+        <!--</ul>-->
+        <!--<ul class="row"><input type="checkbox"/>-->
+        <!--test2-->
+        <!--</ul>-->
+    </div>
+</div>
+
+<script>
+    function enterkey() {
+        if(window.event.keyCode == 13){
+            createList();
+        }
+    }
+    function createList() {
+
+        var ul = document.createElement("ul");
+
+        var inputValue = document.querySelector("#inputTodoList").value;
+        console.dir(inputValue);
+
+        ul.innerHTML = "<input type='checkbox' style='width: 30px; height: 30px'/>" + inputValue;
+
+        if (inputValue === '') {
+            alert("할일을 입력해주세요");
+        } else {
+            document.querySelector(".listPart").appendChild(ul);
+        }
+        document.querySelector("#inputTodoList").value = "";
+    }
+
+</script>
+
+</body>
+</html>

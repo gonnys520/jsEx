@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/html">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<style>
+
+    * {
+        margin: 0px;
+        padding: 0px;
+    }
+
+    #map {
+        display: flex;
+        width: 100%;
+        height: 50vh;
+        justify-content: center;
+        align-items: center;
+
+    }
+
+    .wrapper {
+        display: flex;
+        list: 100%;
+        height: 50vh;
+        justify-content: center;
+        align-items: center;
+        background-color: lightsteelblue;
+    }
+
+    .listUL {
+        list-style: none;
+        color: white;
+        font-size: 2em;
+        text-align: center;
+    }
+
+    .listUL li {
+        border: 1px solid slategray;
+    }
+
+</style>
+
+<div id="map"></div>
+
+<div class="wrapper">
+
+    <ul class="listUL">
+
+    </ul>
+
+</div>
+
+<script type="text/javascript" src="//dapi.kakao.com/v2/maps/sdk.js?appkey=3cfaa90d75acc0d5832172ba581c674a"></script>
+<script>
+    var mapContainer = document.getElementById('map'), // 지도를 표시할 div
+        mapOption = {
+            center: new daum.maps.LatLng(37.570383, 126.986421), // 지도의 중심좌표
+            level: 3 // 지도의 확대 레벨
+        };
+
+    // 지도를 표시할 div와  지도 옵션으로  지도를 생성합니다
+    var map = new daum.maps.Map(mapContainer, mapOption);
+
+
+    // 마커를 생성합니다
+    var marker = new daum.maps.Marker({
+        position: new daum.maps.LatLng(37.570383, 126.986421),
+        map: map
+    });
+
+    // 마커가 지도 위에 표시되도록 설정합니다
+    marker.setMap(map);
+
+
+</script>
+<script src="store.js" ></script>
+<script>
+    //데이터 즉시실행 함수 (aka 자바의 클래스 / 리턴하는 함수를 만들어 준다.)
+    var dao = (function (map) {
+
+        var map = map;
+
+        var arr = [
+
+        function clearMarkers() {
+            for(var store of arr){
+                if(store.marker){
+                    store.marker.setMap(null);
+                }
+            }
+
+        }
+
+        function getList(callback) {
+            callback(arr);
+        }
+
+        function showMarker(idx) {
+
+            clearMarkers();
+
+            var store = arr[idx];
+            if (!store.marker) {
+                store.marker = new daum.maps.Marker({
+                    position: new daum.maps.LatLng(store.lat, store.lng),
+                    map: map
+                });
+            }else{
+                store.marker.setMap(map);
+            }
+            // if (!store.infoWin) {
+            //     var infoWin = new daum.maps.InfoWindow({
+            //         content: store.title
+            //     });
+            // }
+        }
+
+        return {
+            getList: getList,
+            showMarker: showMarker
+        }
+        // //dao.getList 를 호출하는 형태
+        // return {getList: getList}
+    })(map);
+
+    dao.getList(function (stores) {
+        var listUL = document.querySelector(".listUL"), str = '', idx = 0;
+        for (var store of stores) {
+
+            str += "<li data-idx='" + idx++ + "'>" + store.title + "</li>";
+        }
+        listUL.innerHTML = str;
+
+    });
+
+    document.querySelector(".listUL").addEventListener("click", function (e) {
+        var idx = e.target.getAttribute("data-idx");
+        dao.showMarker(idx);
+    }, false);
+
+    daum.maps.event.addListener(map, 'dragend', function() {
+
+        // 지도 중심좌표를 얻어옵니다
+        var latlng = map.getCenter();
+
+        console.log(latlng);
+
+        var nnstore = dao.findNNStore({lat:latlng.jb, lng:latlng.ib})
+
+    });
+
+
+</script>
+
+</body>
+</html>
+
+<script src="store.js"></script>
+<script>
+
+    dao.getList(function(stores){
+        console.log("getList.........");
+        var listUL = document.querySelector(".listUL"),str ='', idx = 0;
+
+        for(var store of stores){
+            str += "<li data-idx='"+ idx++  +"'>" + store.title +"</li>";
+        }
+        listUL.innerHTML = str;
+    });
+
+    document.querySelector(".listUL").addEventListener("click",
+        function(e){
+            var idx = e.target.getAttribute("data-idx");
+            dao.showMarker(idx);
+        } , false);
+
+    daum.maps.event.addListener(map, 'dragend', function() {
+
+        // 지도 중심좌표를 얻어옵니다
+        var latlng = map.getCenter();
+
+        var nnstore = dao.findNNStore({lat:latlng.jb, lng:latlng.ib});
+
+        console.log(nnstore);
+
+    });
+
+
+</script>
+
+</body>
+</html>
